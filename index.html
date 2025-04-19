@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country Time and Date</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url('https://images.pexels.com/photos/162389/lost-places-old-decay-ruin-162389.jpeg?cs=srgb&dl=pexels-pixabay-162389.jpg&fm=jpg'); /* Replace with your image URL */
+      background-size: cover; /* Ensures the image covers the entire body */
+      background-position: center center; /* Centers the image */
+      background-repeat: no-repeat; /* Prevents the image from repeating */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh; /* Full viewport height */
+      margin: 0;
+      color: #fff; /* White text color for contrast */
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Text shadow for readability */
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 12px;
+      font-size: 1rem;
+      margin: 10px;
+      border-radius: 8px;
+      border: 2px solid #2c3e50;
+      background-color: #ffffff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 5px rgb(255, 255, 255);
+    }
+
+    #countryFlag {
+      width: 100px;
+      height: auto;
+      margin-top: 20px;
+    }
+
+    #dateTime {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .info {
+      font-size: 1.2rem;
+      color: #929292;
+      margin-top: 10px;
+    }
+
+    .note {
+      font-size: 0.9rem;
+      color: #ffffff;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Select a Country to View Time and Date</h1>
+
+  <select id="countrySelect">
+    <option value="">-- Select a Country --</option>
+    <option value="US">USA</option>
+    <option value="GB">United Kingdom</option>
+    <option value="IN">India</option>
+    <option value="JP">Japan</option>
+    <option value="AU">Australia</option>
+    <option value="BR">Brazil</option>
+    <option value="RU">Russia</option>
+    <option value="CN">China</option>
+    <option value="EG">Egypt</option>
+    <option value="ZA">South Africa</option>
+    <option value="FR">France</option>
+    <option value="DE">Germany</option>
+    <option value="IT">Italy</option>
+    <option value="CA">Canada</option>
+    <option value="MX">Mexico</option>
+  </select>
+
+  <img id="countryFlag" src="" alt="Country Flag" style="display: none;">
+
+  <div id="dateTime"></div>
+
+  <div class="info" id="countryInfo"></div>
+
+  <div class="note">Note: Time is based on the country’s local timezone.</div>
+
+  <script>
+    const countryData = {
+      US: { name: "USA", flag: "https://flagcdn.com/us.svg", timezone: "America/New_York" },
+      GB: { name: "United Kingdom", flag: "https://flagcdn.com/gb.svg", timezone: "Europe/London" },
+      IN: { name: "India", flag: "https://flagcdn.com/in.svg", timezone: "Asia/Kolkata" },
+      JP: { name: "Japan", flag: "https://flagcdn.com/jp.svg", timezone: "Asia/Tokyo" },
+      AU: { name: "Australia", flag: "https://flagcdn.com/au.svg", timezone: "Australia/Sydney" },
+      BR: { name: "Brazil", flag: "https://flagcdn.com/br.svg", timezone: "America/Sao_Paulo" },
+      RU: { name: "Russia", flag: "https://flagcdn.com/ru.svg", timezone: "Europe/Moscow" },
+      CN: { name: "China", flag: "https://flagcdn.com/cn.svg", timezone: "Asia/Shanghai" },
+      EG: { name: "Egypt", flag: "https://flagcdn.com/eg.svg", timezone: "Africa/Cairo" },
+      ZA: { name: "South Africa", flag: "https://flagcdn.com/za.svg", timezone: "Africa/Johannesburg" },
+      FR: { name: "France", flag: "https://flagcdn.com/fr.svg", timezone: "Europe/Paris" },
+      DE: { name: "Germany", flag: "https://flagcdn.com/de.svg", timezone: "Europe/Berlin" },
+      IT: { name: "Italy", flag: "https://flagcdn.com/it.svg", timezone: "Europe/Rome" },
+      CA: { name: "Canada", flag: "https://flagcdn.com/ca.svg", timezone: "America/Toronto" },
+      MX: { name: "Mexico", flag: "https://flagcdn.com/mx.svg", timezone: "America/Mexico_City" },
+    };
+
+    const countrySelect = document.getElementById("countrySelect");
+    const countryFlag = document.getElementById("countryFlag");
+    const dateTime = document.getElementById("dateTime");
+    const countryInfo = document.getElementById("countryInfo");
+
+    function updateTime(countryCode) {
+      const country = countryData[countryCode];
+      if (!country) return;
+
+      const { name, flag, timezone } = country;
+
+      countryFlag.src = flag;
+      countryFlag.style.display = "block";
+      countryInfo.textContent = `Selected Country: ${name}`;
+
+      function updateClock() {
+        const now = new Date();
+        const options = {
+          timeZone: timezone,
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        };
+
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+        dateTime.textContent = `Current Date and Time: ${formattedDate}`;
+      }
+
+      // Update clock immediately
+      updateClock();
+      // Update clock every second
+      setInterval(updateClock, 1000);
+    }
+
+    countrySelect.addEventListener("change", (event) => {
+      const selectedCountryCode = event.target.value;
+      if (selectedCountryCode) {
+        updateTime(selectedCountryCode);
+      } else {
+        countryFlag.style.display = "none";
+        countryInfo.textContent = "";
+        dateTime.textContent = "";
+      }
+    });
+
+  </script>
+
+</body>
+</html>
